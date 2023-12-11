@@ -1,0 +1,3 @@
+/home/eina/LAB2_TFTP/gettftp/cmake-build-debug/CMakeFiles/gettftp.dir
+/home/eina/LAB2_TFTP/gettftp/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/eina/LAB2_TFTP/gettftp/cmake-build-debug/CMakeFiles/rebuild_cache.dir
