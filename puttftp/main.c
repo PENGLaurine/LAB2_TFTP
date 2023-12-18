@@ -22,6 +22,7 @@ int main(int argc, char** argv) {
     struct addrinfo *result,*rp;
     memset(&hints, 0, sizeof(struct addrinfo));
     hints.ai_family = AF_INET;    /* Allow IPv4 or IPv6 */
+    hints.ai_protocol = IPPROTO_TCP;
 
     int sfd, s = getaddrinfo(host,NULL, &hints, &result);
 
