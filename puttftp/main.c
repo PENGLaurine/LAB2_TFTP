@@ -4,6 +4,8 @@
 #include <netdb.h>
 #include <string.h>
 #include <unistd.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
 int main(int argc, char** argv) {
 
@@ -19,38 +21,36 @@ int main(int argc, char** argv) {
     struct addrinfo hints;
     struct addrinfo *result,*rp;
     memset(&hints, 0, sizeof(struct addrinfo));
-    hints.ai_family = AF_UNSPEC;    /* Allow IPv4 or IPv6 */
-    hints.ai_socktype = SOCK_STREAM;
-    hints.ai_flags = 0;
-    hints.ai_protocol = 0;          /* Any protocol */
+    hints.ai_family = AF_INET;    /* Allow IPv4 or IPv6 */
 
-
-    int s = getaddrinfo(argv[1],NULL, &hints, &result);
+    int s = getaddrinfo(host,NULL, &hints, &result);
 
     if (s!=0){
         printf("Error: getaddrinfo failure\n");
         exit(EXIT_FAILURE);
     }
 
-    int sfd;
-    for (rp = result; rp != NULL; rp = rp->ai_next) {
-        sfd = socket(rp->ai_family, rp->ai_socktype,
-                     rp->ai_protocol);
-        if (sfd == -1)
-            continue;
+    for(rp=result; rp!=NULL; rp=rp->ai_next){
+        //print ip address and address info
+        char* ipverstr;
+        switch (rp->ai_family){
+            case AF_INET:
+                ipverstr = "IPv4";
+                break;
+            case AF_INET6:
+                ipverstr = "IPv6";
+                break;
+            default:
+                ipverstr = "unknown";
+                break;
+        }
 
-        if (connect(sfd, rp->ai_addr, rp->ai_addrlen) != -1)
-            fprintf(stdout,"%s\n",rp->ai_addr->sa_data);
-            break;                  /* Success */
-
-        close(sfd);
+        struct sockaddr_in *addr;
+        addr = (struct sockaddr_in *)rp->ai_addr;
+        fprintf(stdout,"addr ip : %s ",ipverstr);
+        fprintf(stdout,"%s\n",inet_ntoa((struct in_addr)addr->sin_addr));
+        fprintf(stdout,"addrinfo:\n--family: %d\n--socktype: %d\n--protocol: %d\n\n",rp->ai_family,rp->ai_socktype,rp->ai_protocol);
     }
-
-    if (rp == NULL) {               /* No address succeeded */
-        fprintf(stderr, "Could not connect\n");
-        exit(EXIT_FAILURE);
-    }
-    fprintf(stdout,"%s\n",rp->ai_addr->sa_data);
 
     freeaddrinfo(result);
 }
