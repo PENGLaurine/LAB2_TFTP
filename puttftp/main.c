@@ -23,7 +23,7 @@ int main(int argc, char** argv) {
     memset(&hints, 0, sizeof(struct addrinfo));
     hints.ai_family = AF_INET;    /* Allow IPv4 or IPv6 */
 
-    int s = getaddrinfo(host,NULL, &hints, &result);
+    int sfd, s = getaddrinfo(host,NULL, &hints, &result);
 
     if (s!=0){
         printf("Error: getaddrinfo failure\n");
@@ -50,6 +50,17 @@ int main(int argc, char** argv) {
         fprintf(stdout,"addr ip : %s ",ipverstr);
         fprintf(stdout,"%s\n",inet_ntoa((struct in_addr)addr->sin_addr));
         fprintf(stdout,"addrinfo:\n--family: %d\n--socktype: %d\n--protocol: %d\n\n",rp->ai_family,rp->ai_socktype,rp->ai_protocol);
+
+        //reserve a connection socket to the server
+        sfd = socket(rp->ai_family, rp->ai_socktype,
+                     rp->ai_protocol);
+        if (sfd == -1)
+            continue;
+
+        if (connect(sfd, rp->ai_addr, rp->ai_addrlen) != -1)
+            break;                  /* Success */
+
+        close(sfd);
     }
 
     freeaddrinfo(result);
