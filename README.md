@@ -5,7 +5,7 @@ The objectif of this project is to develop a TFTP client using RFC specification
 
 ***
 ## question1
-Use command-line arguments for the gettftp and puttftp programs to obtain request information (server and file)
+Use command-line arguments for the gettftp and puttftp programs to obtain request information (server and file)
 
 We have just to use the arguments `argv[1]` as the server name and `argv[2]` as the file name.
 We can also return an error if the number of arguments is not correct: `argc != 3`
@@ -61,4 +61,4 @@ We can receive by the call `recv(sfd,reply,sizeof reply - 1,0)` or `read(sfd,rep
        }
        reply[n] = '\0';
 
-The reply message have to terminate with `\0` so we have to add this in the end.
+The reply message have to terminate with `\0` so we have to add this at the end.
