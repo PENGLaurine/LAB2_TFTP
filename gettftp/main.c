@@ -69,12 +69,22 @@ int main(int argc, char** argv) {
 
     freeaddrinfo(result);
 
+    /* write and send read request to the server */
     char message[1024];
-    strcpy(message,"cat ");
-    strcat(message,file);
+    message[0]='\0';
+    message[1]='\1';
+    int i;
+    for (i=0;i<sizeof file;i++){
+        message[i+2] = file[i];
+    }
+    int i2;
+    for (i2=0;i2<sizeof file;i2++){
+        message[i+i2+2] = "octet"[i2];
+    }
 
     write(sfd, message, strlen(message));
 
+    /* receive  reply from server*/
     char reply[1024];
     int n;
 
@@ -84,6 +94,7 @@ int main(int argc, char** argv) {
     }
     reply[n] = '\0';
 
+    /* print on the terminal */
     write(1,reply,sizeof reply);
 
 }
