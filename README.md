@@ -48,9 +48,41 @@ For gettftp:
 
  - Build a properly formed Read Request (RRQ) and send it to the server:
 
-   `write(sfd, message, strlen(message));` where message is the request.
+Opcode of types of TFTP packets
 
- - Receive a file:
+    opcode  operation
+      1     Read request (RRQ)
+      2     Write request (WRQ)
+      3     Data (DATA)
+      4     Acknowledgment (ACK)
+      5     Error (ERROR)
+
+
+RRQ format
+
+     2 bytes    string     1 byte    string    1 byte
+    +--------+------------+------+------------+------+
+    | Opcode |  Filename  |   0  |    Mode    |   0  |
+    +--------+------------+------+------------+------+
+
+   To send the RRQ we can use `write(sfd, message, strlen(message));` where message is the request.
+
+ - Receive a file (DATA and ACK):
+
+DATA packet format
+
+     2 bytes     2 bytes      n bytes
+    +--------+------------+------------+
+    | Opcode |   Block #  |   Data     |
+    +--------+------------+------------+
+
+ACK packet format
+
+     2 bytes    2 bytes
+    +--------+------------+
+    | Opcode |   Block #  |
+    +--------+------------+
+
 We can receive by the call `recv(sfd,reply,sizeof reply - 1,0)` or `read(sfd,reply,sizeof reply -1)`
 
        char reply[1024];
